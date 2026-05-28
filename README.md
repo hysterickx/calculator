@@ -17,7 +17,8 @@ A functional desktop calculator application built with Python and Tkinter. This 
 
 ## 📸 Preview
 
-<img width="179" height="224" alt="image" src="https://github.com/user-attachments/assets/250a03f2-6ccc-4567-9141-979d8709a8c1" />
+<img width="224" height="275" alt="image" src="https://github.com/user-attachments/assets/4929369b-c18c-4545-b972-ea60fbe631be" />
+
 
 
 ## 💻 How to Run
