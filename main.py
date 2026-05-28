@@ -1,29 +1,37 @@
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 
 def clear():
-    calc.delete(0, tk.END)
+    calc.delete(0, 'end')
     calc.insert (0,0)
 
 def calculate():
     value = calc.get()
     if value [-1] in '+-*/':
         value += value [:-1]
-    calc.delete(0, tk.END)
+    calc.delete(0, 'end')
     try:
         calc.insert(0, eval(value))
     except (NameError, SyntaxError):
-        messagebox.showinfo('Внимание!', 'Нужны только цифры. Вы ввели другие символы!')
+        error_message = CTkMessagebox(
+            win,
+            title='Внимание!',
+            message='Нужны только цифры. Вы ввели другие символы!'
+        )
         calc.insert(0,0)
     except ZeroDivisionError:
-        messagebox.showinfo('Внимание!', 'На ноль делить нельзя!')
+        error_message = CTkMessagebox(
+            win,
+            title='Внимание!',
+            message='На ноль делить нельзя!'
+        )
         calc.insert(0,0)
 
 def add_digit(digit):
     value = calc.get()
     if value[0] == '0' and len(value) == 1:
         value = value[1:]
-    calc.delete(0, tk.END)
+    calc.delete(0, 'end')
     calc.insert(0, value + digit)
 
 def add_operation(operation):
@@ -33,20 +41,8 @@ def add_operation(operation):
     elif '+' in value or '-' in value or '*' in value or '/' in value:
         calculate()
         value = calc.get()
-    calc.delete(0, tk.END)
+    calc.delete(0, 'end')
     calc.insert(0, value + operation)
-
-def make_digit_button(digit):
-    return tk.Button(win, text=digit, bd=5, font=('Arial', 13), command=lambda: add_digit(digit))
-
-def make_operation_button(operation):
-    return tk.Button(win, text=operation, bd=5, fg='Blue', font=('Arial', 13), command=lambda: add_operation(operation))
-
-def make_calc_button(operation):
-    return tk.Button(win, text=operation, bd=5, fg='Blue', font=('Arial', 13), command=calculate)
-
-def make_clear_button(operation):
-    return tk.Button(win, text=operation, bd=5, fg='Blue', font=('Arial', 13), command=clear)
 
 def press_key(event):
     print(repr(event.char))
@@ -57,44 +53,80 @@ def press_key(event):
     elif event.char == '\r':
         calculate()
 
-win = tk.Tk()
-win.config(bg='#99FF99')
+ctk.set_appearance_mode("dark")
+win = ctk.CTk()
 win.title('Калькулятор')
 win.bind ('<Key>', press_key)
-win.geometry('240x270+600+300')
+win.geometry('300x340+600+300')
 win.resizable(False, False)
 
-calc = tk.Entry(win, justify=tk.RIGHT, font=('Arial', 15), width=15)
+calc = ctk.CTkEntry(
+    win, justify='right', font=('Arial', 30),
+    width=15, height = 50
+)
 calc.insert(0, '0')
-calc.grid(row=0, column=0, columnspan=4, stick='we', padx=5)
+calc.grid(
+    row=0, column=0, columnspan=4,
+    stick='we', padx=5
+)
 
-make_digit_button('1').grid(row=1, column=0, stick='wens', padx=5, pady=5)
-make_digit_button('2').grid(row=1, column=1, stick='wens', padx=5, pady=5)
-make_digit_button('3').grid(row=1, column=2, stick='wens', padx=5, pady=5)
-make_digit_button('4').grid(row=2, column=0, stick='wens', padx=5, pady=5)
-make_digit_button('5').grid(row=2, column=1, stick='wens', padx=5, pady=5)
-make_digit_button('6').grid(row=2, column=2, stick='wens', padx=5, pady=5)
-make_digit_button('7').grid(row=3, column=0, stick='wens', padx=5, pady=5)
-make_digit_button('8').grid(row=3, column=1, stick='wens', padx=5, pady=5)
-make_digit_button('9').grid(row=3, column=2, stick='wens', padx=5, pady=5)
-make_digit_button('0').grid(row=4, column=0, stick='wens', padx=5, pady=5)
+GRID_PARAMS = {
+    'sticky': 'wens',
+    'padx': 5,
+    'pady': 5
+}
 
-make_operation_button('+').grid(row=1, column=3, stick='wens', padx=5, pady=5)
-make_operation_button('-').grid(row=2, column=3, stick='wens', padx=5, pady=5)
-make_operation_button('*').grid(row=3, column=3, stick='wens', padx=5, pady=5)
-make_operation_button('/').grid(row=4, column=3, stick='wens', padx=5, pady=5)
-make_calc_button('=').grid(row=4, column=2, stick='wens', padx=5, pady=5)
-make_clear_button('C').grid(row=4, column=1, stick='wens', padx=5, pady=5)
+BTN_PARAMS = {
+    'fg_color': '#333333',
+    'hover_color': '#262626',
+    'font': ('Arial', 13)
+}
 
-win.grid_columnconfigure(0, minsize=60)
-win.grid_columnconfigure(1, minsize=60)
-win.grid_columnconfigure(2, minsize=60)
-win.grid_columnconfigure(3, minsize=60)
-win.grid_rowconfigure(1, minsize=60)
-win.grid_rowconfigure(2, minsize=60)
-win.grid_rowconfigure(3, minsize=60)
-win.grid_rowconfigure(1, minsize=60)
-win.grid_rowconfigure(2, minsize=60)
-win.grid_rowconfigure(4, minsize=60)
+button_data = [
+    ('0', 4, 0, lambda: add_digit('0')),
+    ('1', 1, 0, lambda: add_digit('1')),
+    ('2', 1, 1, lambda: add_digit('2')),
+    ('3', 1, 2, lambda: add_digit('3')),
+    ('4', 2, 0, lambda: add_digit('4')),
+    ('5', 2, 1, lambda: add_digit('5')),
+    ('6', 2, 2, lambda: add_digit('6')),
+    ('7', 3, 0, lambda: add_digit('7')),
+    ('8', 3, 1, lambda: add_digit('8')),
+    ('9', 3, 2, lambda: add_digit('9')),
+    ('+', 1, 3, lambda: add_operation('+')),
+    ('-', 2, 3, lambda: add_operation('-')),
+    ('*', 3, 3, lambda: add_operation('*')),
+    ('/', 4, 3, lambda: add_operation('/')),
+    ('C', 4, 1, clear),
+    ('=', 4, 2, calculate)
+]
+
+for text, row, column, command in button_data:
+    button = ctk.CTkButton(
+        win,
+        **BTN_PARAMS,
+        text=text,
+        command=command
+    )
+
+    button.grid(
+        row=row,
+        column=column,
+        **GRID_PARAMS
+    )
+
+grid_types = {
+    'column': win.grid_columnconfigure,
+    'row': win.grid_rowconfigure
+}
+
+grid_data = [
+    ('column', 0), ('column', 1), ('column', 2), ('column', 3),
+    ('row', 1), ('row', 2), ('row', 3), ('row', 4)
+]
+
+for grid_type, value in grid_data:
+    configure = grid_types[grid_type]
+    configure(value, weight=1)
 
 win.mainloop()
