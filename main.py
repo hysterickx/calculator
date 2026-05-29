@@ -158,3 +158,5 @@ class CalculatorApp(ctk.CTk):
 if __name__ == '__main__':
     app = CalculatorApp()
     app.mainloop()
+
+#sss
