@@ -1,4 +1,18 @@
 COLOR_DARK = '#0d0a0c'
+COLOR_LIME = '#99ff66'
+COLOR_BLACK = '#000000'
+COLOR_WHITE = '#ffffff'
+
+MSG_PARAMS = {
+    "width": 300,
+    "height": 150,
+    "title": 'Ошибочка',
+    "icon": 'info',
+    "justify": 'center',
+    "button_color": COLOR_WHITE,
+    "button_hover_color": COLOR_LIME,
+    "button_text_color": COLOR_BLACK
+}
 
 BTN_PARAMS = {
     'fg_color': '#333333',
@@ -33,13 +47,8 @@ BTN_DATA = [
     ('*', 3, 3), ('/', 4, 3), ('C', 4, 1), ('=', 4, 2)
 ]
 
-WRONG_ERROR_TXT = {
-    'title': 'Внимание!',
-    'message': 'Нужны только цифры. Вы ввели другие символы!'
-}
-
-ZERO_ERROR_TXT = {
-    'title': 'Внимание!',
-    'message': 'На ноль делить нельзя!'
+ERROR_MESSAGES = {
+    'not_digit': 'Не допускаются буквы для ввода',
+    'zero_division': 'На ноль делить нельзя'
 }
 

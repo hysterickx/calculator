@@ -2,14 +2,11 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from functools import partial
 import config as cfg
-import re
 
 
 class MainView(ctk.CTkFrame):
     def __init__(self, master, controller):
         super().__init__(master, fg_color='#262626')
-
-        self.value = '0'
 
         self.entry = ctk.CTkEntry(
             self, **cfg.ENTRY_PARAMS
@@ -35,6 +32,18 @@ class MainView(ctk.CTkFrame):
     def show_result(self, value):
         self.entry.delete(0, 'end')
         self.entry.insert(0, str(value))
+        self.entry.focus()
+
+    def show_error(self, status):
+        error_message = CTkMessagebox(
+            app,
+            message=cfg.ERROR_MESSAGES[status],
+            **cfg.MSG_PARAMS
+        )
+        self.wait_window(error_message)
+        self.entry.delete(0, 'end')
+        self.entry.insert(0, '0')
+        self.entry.focus()
 
 
 class MainLogic:
@@ -75,9 +84,11 @@ class MainLogic:
             try:
                 self.value = str(eval(self.value))
             except (NameError, SyntaxError):
-                self.value = "Ошибка:Символы"
+                self.value = '0'
+                return 'not_digit'
             except ZeroDivisionError:
-                self.value = "Ошибка:Деление"
+                self.value = '0'
+                return 'zero_division'
             return self.value
 
         if user_input in '+-*/':
@@ -90,15 +101,15 @@ class MainLogic:
                 try:
                     self.value = str(eval(self.value))
                 except ZeroDivisionError:
-                    self.value = "Ошибка:Деление"
+                    self.value = '0'
+                    return 'zero_division'
                 except Exception:
                     self.value = '0'
 
-            if "Ошибка" not in self.value:
-                self.value = self.value + user_input
+            self.value = self.value + user_input
             return self.value
 
-        if self.value == '0' or "Ошибка" in self.value:
+        if self.value == '0':
             self.value = ''
 
         self.value = self.value + str(user_input)
@@ -121,6 +132,9 @@ class MainApp(ctk.CTk):
 
     def transfer_data(self, user_input):
         result = self.logic.calculate(user_input)
+        if result in ('not_digit', 'zero_division'):
+            self.view.show_error(result)
+            return 'break'
         self.view.show_result(result)
         return 'break'
 
